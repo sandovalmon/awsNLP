@@ -1,0 +1,74 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+	
+<head>
+	<title>AWS Train - Sample</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://unpkg.com/vue/dist/vue.js"></script>
+</head>
+<body>
+<div id="container">
+	<div style="display:block;overflow-y:scroll; height:400px; width:800px; margin:auto;border:1px solid black">
+		{{display}}
+	</div>
+	<div style="width:800px;display:block;margin:auto;">
+		<input id="inputText" type="text" style="border:1px solid black; width:600px;"/>
+		<input type="button" style="width:100px" value="Send message" @click="sendMessage"/>
+		<input type="button" style="width:90px" value="Clear" @click="clear"/>
+	</div>
+</div>
+
+<script>
+</script>
+	var dialog = new Vue({
+		el:'#container',
+		data: {
+			display:"";
+			diaMessage:[],
+			diaContext:{}
+		}, methods: {
+			sendMessage: function(){
+				//get input text
+				this.appendToDisplay($(#inputText).val());
+				this.diaMessage = $(#inputText).val();
+				
+				//reset input text
+				$(#inputText).val("");
+				
+				//send message to get response
+				$.ajax({
+					url : 'http://localhost:2222/getResponse',
+					data: {message : this.diaMessage, context: this.diaContext},
+					context: this,
+					method : 'GET',
+					dataType : 'json',
+					success : function(data) {
+						//get context
+						this.diaContext = data.context;
+						//append to watson
+						data.output.text.forEach(this.appendToDisplay);
+					}
+				});
+			}, appendToDisplay: function(item, index) {
+				if (index) {
+					this.display = "You: " item + "<br/>"
+				} else {
+					this.display = "Watson: " + item + "<br/>"
+				}
+				
+			}, clear: function(){
+				//reset input text
+				$(#inputText).val("");
+				
+				this.display="";
+				this.diaMessage=[];
+				this.diaContext;
+				this.sendMessage();
+			}
+		}, beforeMount: function(){
+		    this.sendMessage();
+		}
+	}
+</body>
+</html>

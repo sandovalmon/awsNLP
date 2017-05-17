@@ -1,0 +1,75 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
+	
+<head>
+	<title>AWS Train - Sample</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://unpkg.com/vue"></script>
+</head>
+<body>
+<div id="container">
+	<div v-html="display" style="display:block;overflow-y:scroll; height:400px; width:800px; margin:auto;border:1px solid black"></div>
+	<div style="width:800px;display:block;margin:auto;">
+		<input id="inputText" type="text" style="border:1px solid black; width:600px;"/>
+		<input type="button" style="width:100px" value="Send message" @click="sendMessage"/>
+		<input type="button" style="width:90px" value="Clear" @click="clear"/>
+	</div>
+</div>
+
+<script>
+	var dialog = new Vue({
+		el:'#container',
+		data: {
+			display:"",
+			diaContext:"",
+			inputText:""
+		}, methods: {
+			sendMessage: function(){
+				//get input text
+				if ($("#inputText").val() != "") {
+					this.inputText=$("#inputText").val();
+					this.appendRequestToDisplay(this.inputText);
+					
+					//reset input text
+					$("#inputText").val("");
+				}
+				
+				//send message to get response
+				$.ajax({
+					url : '/getResponse',
+					data: {message : this.inputText, context: this.diaContext},
+					context: this,
+					method : 'GET',
+					dataType : 'json',
+					success : function(data) {
+						//get context
+						this.diaContext = JSON.stringify(data.context);
+						//append to text box
+						for (var i = 0; i < data.output.text.length; i++) {
+							this.appendResponseToDisplay(data.output.text[i]);
+						}
+						
+					}
+				});
+			}, appendResponseToDisplay: function(item) {
+				this.display = this.display + "Watson: " + item + "<br/>"
+				
+			}, appendRequestToDisplay: function(item) {
+				this.display = this.display + "You: " + item + "<br/>"
+			}, clear: function(){
+				//reset input text
+				$("#inputText").val("");
+				
+				this.display="";
+				this.diaMessage=null;
+				this.diaContext=null;
+				this.sendMessage();
+			}
+		}, beforeMount: function(){
+		    this.sendMessage();
+		}
+	});
+</script>
+</body>
+</html>

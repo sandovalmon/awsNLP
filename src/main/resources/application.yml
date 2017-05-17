@@ -1,0 +1,15 @@
+# Spring properties
+spring:
+  application:
+     name: aws-train
+  thymeleaf:
+    check-template-location: true
+    mode: HTML
+    cache: false
+    encoding: UTF-8
+    content-type: text/html
+   
+# HTTP Server
+server:
+  port: 3333   # HTTP (Tomcat) port
+ 

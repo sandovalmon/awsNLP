@@ -1,0 +1,55 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+buildscript {
+    dependencies {
+        classpath group: 'org.springframework.boot', name:'spring-boot-gradle-plugin', version: '1.5.2.RELEASE'
+    }
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+dependencyManagement {
+  imports {
+    mavenBom 'org.springframework.cloud:spring-cloud-dependencies:Dalston.RELEASE'
+  }
+  
+    dependencies {
+        dependencySet (group:'org.thymeleaf', version: '3.0.3.RELEASE') {
+            entry 'thymeleaf'
+            entry 'thymeleaf-spring4'
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.springframework.boot', name:'spring-boot-starter'
+    compile group: 'org.springframework.boot', name:'spring-boot-starter-web'
+    
+    compile("org.springframework.boot:spring-boot-starter-thymeleaf")
+    compile("org.springframework.boot:spring-boot-devtools")
+    compile('net.sourceforge.nekohtml:nekohtml:1.9.22')
+    
+    compile group: 'org.thymeleaf', name:'thymeleaf'
+    compile group: 'org.thymeleaf', name:'thymeleaf-spring4'
+    compile group: 'nz.net.ultraq.thymeleaf', name: 'thymeleaf-layout-dialect', version: '2.2.1'
+    
+    compile("com.ibm.watson.developer_cloud:java-sdk:3.8.0")
+    
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+    testCompile("junit:junit")
+}
+
+//Reloadable html files
+bootRun {
+    addResources = true
+}

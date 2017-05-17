@@ -11,13 +11,13 @@
 <div id="container">
 	<div v-html="display" style="display:block;overflow-y:scroll; height:400px; width:800px; margin:auto;border:1px solid black"></div>
 	<div style="width:800px;display:block;margin:auto;">
-		<input id="inputText" type="text" style="border:1px solid black; width:600px;"/>
+		<input id="inputText" type="text" style="border:1px solid black; width:600px;" v-on:keyup="keyMonitor"/>
 		<input type="button" style="width:100px" value="Send message" @click="sendMessage"/>
 		<input type="button" style="width:90px" value="Clear" @click="clear"/>
 	</div>
 </div>
 
-<script>
+<script>	
 	var dialog = new Vue({
 		el:'#container',
 		data: {
@@ -65,7 +65,12 @@
 				this.diaMessage=null;
 				this.diaContext=null;
 				this.sendMessage();
+			}, keyMonitor: function(event) {
+				 if (event.key == "Enter") {
+					 this.sendMessage();
+				 }
 			}
+			
 		}, beforeMount: function(){
 		    this.sendMessage();
 		}
